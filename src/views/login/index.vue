@@ -94,7 +94,7 @@ const store = useStore()
 const loginFormRef = ref()
 //首先进行表单校验 这块主体都是取自elementplus
 //传入的 formEl 就是 loginFormRef.value，也就是整个 <el-form> 组件实例
-//valid	校验结果，布尔值     fields是未通过的字段信息
+//valid	校验结果，布尔值     fields 是未通过的字段信息
 const submitForm = async(formEl)=>{
   if (!formEl) return
   await formEl.validate(async (valid, fields) => {
