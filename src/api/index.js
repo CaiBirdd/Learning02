@@ -44,3 +44,12 @@ export const submitAccompanyDataAPI = (data)=> request.post('/companion',data)
 export const getAccompanyDataListAPI = (params)=> request.get('/companion/list',{params})
 //删除陪护师操作
 export const deleteAccompanyDataAPI = (data)=> request.post('/delete/companion',data)
+
+//获取下单的订单列表
+export const getOrderListAPI = (params)=> request.get('/admin/order',{params})
+//订单服务状态改变
+export const orderServiceStatusChangeAPI = (data)=> request.post('/update/order',data)
+
+//首页信息
+
+export const getDashboardDataAPI = ()=> request.get('/report')
