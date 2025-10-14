@@ -74,7 +74,7 @@ const validateUser = (rule, value, callback) => {
     reg.test(value) ? callback() : callback(new Error('手机号格式不对,请输入正确手机号'))
   }
 }
-// 密码校验规则
+// 密码校验规则 xxpz123
 const validatePass = (rule, value, callback) => {
   // 不能为空
   if (value === '') {

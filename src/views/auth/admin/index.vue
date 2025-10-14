@@ -144,9 +144,16 @@ console.log(route,'路由route中的数据')
 
   <!-- 这里是分页 -->
   <div class="pagination-info">
-    <el-pagination v-model:current-page="paginationData.pageNum" v-model:page-size="paginationData.pageSize"
-                   :page-sizes="[5, 10, 15, 20]" :background="false" size="default" layout="sizes,total, prev, pager, next"
-                   :total="tableData.total" @current-change="handleCurrentChange" @size-change="handleSizeChange" />
+    <el-pagination 
+      v-model:current-page="paginationData.pageNum" 
+      v-model:page-size="paginationData.pageSize"
+      :page-sizes="[5, 10, 15, 20]" 
+      :background="false" 
+      size="default" 
+      layout="sizes,total, prev, pager, next"
+      :total="tableData.total" 
+      @current-change="handleCurrentChange" 
+      @size-change="handleSizeChange" />
   </div>
 
   <!-- 点击编辑的弹出层 -->

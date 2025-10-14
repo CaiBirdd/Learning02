@@ -27,7 +27,7 @@ const mutations = {
   },
   //动态菜单渲染
   //这段代码的主要目的是将从后端获取的动态菜单数据（data）转换成 Vue Router 能够识别和使用的路由配置对象数组，并存储到 Vuex 的 state.routerList 中
-  //vie得到的数据解析如下：
+  //vite得到的数据解析如下：
   //Key (键)：是组件文件的相对路径
   //Value (值)：是一个异步导入函数（一个返回 Promise 的箭头函数），例如 () => import('/src/views/auth/admin/index.vue')。
   DynamicMenuRender(state,data){

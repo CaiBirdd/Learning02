@@ -36,6 +36,8 @@ const fetchDashboardData = async () => {
     
     // 1. 赋值统一数据：最精简的操作
     dashboardData.value = res?.data?.data ?? null 
+    console.log(dashboardData.value,'首页数据')
+    
 
     // 2. 使用统一的响应式数据进行校验和处理
     if (dashboardData.value) {
@@ -78,7 +80,7 @@ const fetchDashboardData = async () => {
 
 
 /**
- * @description: ECharts 初始化
+ * @description: ECharts 初始化 这一块详见gemini的注释 非常详细
  */
 const initEchart = () => {
   if (!echartRef.value) return 
@@ -122,6 +124,7 @@ const initEchart = () => {
       axisLabel: { color: '#999' },
       axisLine: { show: true, lineStyle: { color: '#999' } },
       splitLine: { show: true, lineStyle: { type: 'dashed', color: '#eee' } },
+      minInterval: 1
     },
     series: [
       {

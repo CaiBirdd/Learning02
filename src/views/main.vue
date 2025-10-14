@@ -5,7 +5,7 @@ import navHeader from '@/components/navHeader.vue'
 
 <template>
   <div class="common-layout">
-
+    <!-- layout布局也是用的element plus的 -->
     <el-container> <!-- 渲染后就是一个 <div class="el-container"> 所以可以给他加类名  -->
       <!-- 侧边栏 -->
       <Aside></Aside>

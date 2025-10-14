@@ -12,7 +12,7 @@ const router = useRouter()
 const handleClick = (item,active) =>{
   router.push(item.meta.path) //实现点击时右侧页面跳转
   store.commit('addMenu', item.meta) //将当前点击的菜单信息传入 就是具体的那一项的数组
-  store.commit('updateMenuActive', active) //实现点击的菜单一直高亮
+  store.commit('updateMenuActive', active) //实现点击的菜单一直高亮 具体实现在aside组件
 }
 </script>
 
@@ -25,13 +25,14 @@ const handleClick = (item,active) =>{
       :index="`${loopIndex}-${item.meta.id}`"
       @click="handleClick(item,`${loopIndex}-${item.meta.id}`)"
     >
-      <!-- 图标需要结合数据动态渲染，图标是一个组件 -->
+      <!-- 图标需要结合数据动态渲染，图标是一个组件 这里可以看看elementplus的图标格式<el-icon><Plus/></el-icon> -->
       <el-icon size="20">
         <component :is="item.meta.icon"></component>
       </el-icon>
       <span>{{item.meta.name}}</span>
+      {{ console.log('item index:', `${loopIndex}-${item.meta.id}`, item.meta.name) }}
     </el-menu-item>
-    <!-- 有子菜单的情况 -->
+    <!-- 有子菜单的情况 :index="`${index+1}`" 是el-menu的标识 由于递归所以这里是动态的 -->
     <el-sub-menu v-else :index="`${index+1}`">
       <template #title>  
         <!-- 图标复用上边那快 -->

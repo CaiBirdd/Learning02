@@ -250,7 +250,7 @@ const route = useRoute()
       :rules="rules"
     >
       <el-form-item v-show="false" prop="id">
-        <el-input v-model="form.id" placeholder="请输入昵称"/>
+        <el-input v-model="form.id" />
       </el-form-item>
       <el-form-item label="昵称" prop="name">
         <el-input  v-model="form.name" placeholder="请输入昵称"/>
@@ -307,8 +307,7 @@ const route = useRoute()
         <div v-if="selectPhotoIndex === index" class="select">
           <el-icon color="#fff"><Check /></el-icon>
         </div>
-        <el-image style="width: 148px; height:148px" :src="item.url"
-        />
+        <el-image style="width: 148px; height:148px" :src="item.url"/>
       </div>
     </div>
     <!-- 选择图片的底部确认按钮 -->

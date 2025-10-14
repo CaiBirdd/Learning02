@@ -10,9 +10,9 @@ const store = useStore()
 const selectMenu = computed(() => store.state.menu.selectMenu)
 
 
-//关闭tab页面 item就是selectMenu中的数组对象，也就是菜单一项，index是其下标
+//关闭tab页面 item就是selectMenu中的对象数组，也就是菜单一项，index是其下标
 const closeTab = (item,index) =>{
-  // 1. 触发 vuex 中的方法，删除 Tab
+  // 1. 触发 vuex 中的方法，删除 Tab 点了就删，这里没有判断
   store.commit('closeMenu', item)
   // 2. 删除非当前选中页面的逻辑：如果删除的 Tab 不是当前用户正在看的页面，则不跳转
   if(item.path !== route.path){
@@ -21,7 +21,7 @@ const closeTab = (item,index) =>{
   
   // 3. 处理删除当前选中 Tab 后的路由跳转逻辑
   
-  // 3.1. 检查是否删除的是“最后一项”
+  // 3.1. 检查是否删除的是“最后一项” 这个最后一项有两个意思，一个是满了的最后一项，一个是就是删除到最后一项了
   // 注意：这里的 index 是 commit 之前 selectMenu 数组中的下标
   // selectMenu.value.length 已经是 commit 之后的新长度了 (减少了 1)
   if(index === selectMenu.value.length ){ 

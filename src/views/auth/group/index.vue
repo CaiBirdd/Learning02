@@ -30,7 +30,7 @@ const open = (rowData = {})=>{
   //nextTick 的作用：排队等候 DOM 更新***确保操作组件实例（如调用 treeRef.value.setCheckedKeys）的代码运行在 DOM 更新之后
   //告诉 Vue：等 DOM 渲染完，再执行我的回显逻辑
   nextTick(() => {
-    // 编辑操作
+    // 如果rowData存在说明是编辑操作
     if(rowData) {
       // 1. 回显基础表单数据
       // Object.assign 是一个 JavaScript 方法，用于将第二个参数（源对象）的属性复制到第一个参数（目标对象）上。
