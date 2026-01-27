@@ -1,23 +1,20 @@
 <script setup>
 import treeMenu from './treeMenu.vue'
-//import { useRouter } from 'vue-router'
 import { computed } from 'vue'
-import { useStore } from 'vuex'
-const store = useStore()
-const isCollapse = computed(()=> store.state.menu.isCollapse) //访问vuex中state的值需要通过计算属性 menu是模块名称
+import { useMenuStore } from '@/store/menu'
 
-//const router = useRouter()
-//const menuData = ref(router.options.routes[0].children)
-//console.log(menuData)
-//console.log(router)
+const menuStore = useMenuStore()
+
+// 访问 Pinia 中 state 的值，同样需要通过计算属性保持响应式
+const isCollapse = computed(() => menuStore.isCollapse)
 //通过动态路由信息 渲染菜单
-const menuData = computed(() => store.state.menu.routerList)
+const menuData = computed(() => menuStore.routerList)
 const handleOpen = ()=>{
 }
 const handleClose = ()=>{
 }
 //菜单高亮显示
-const active = computed(() => store.state.menu.menuActive)
+const active = computed(() => menuStore.menuActive)
 </script>
 
 <template>
@@ -32,7 +29,7 @@ const active = computed(() => store.state.menu.menuActive)
     @close="handleClose"
     :collapse="isCollapse" 
   >
-    <!-- 上面 :collapse这个动态属性是elementplus自带的，但是后面是vuex的 -->
+    <!-- 上面 :collapse这个动态属性是elementplus自带的，但是后面是Pinia的 -->
     <p class="logo-lg">{{ !isCollapse ? 'DIDI陪诊' : 'DIDI'}}</p>
     <!-- 封装成组件抽出去了 传进去一个数组-->
     <treeMenu :menuData="menuData" :loopIndex="1"></treeMenu>

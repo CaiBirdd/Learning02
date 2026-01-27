@@ -7,33 +7,42 @@ import Login from '../views/login/index.vue'
 // import Dashboard from '../views/dashboard/index.vue'
 // import Staff from '../views/vppz/staff/index.vue'
 
-
 //关于重定向
 //这段代码是在VueRouter 实例化时，对根路径 /进行的动态重定向处理。
 //它的目的，是确保用户访问应用首页时，能够根据他们拥有的第一个动态菜单权限，自动跳转到对应的页面。
 //如果用户已登录状态信息（动态路由）存在： 应用会根据权限列表，自动导航到用户有权访问的第一个页面（如果有二级菜单，就跳到第一个二级菜单；如果没有，就跳到一级菜单）。
+// 后台主页面，也就是main.vue和登录页Login是同级的，main.vue里的路由出口展示点击侧边栏后的内容
 const router = createRouter({
   history: createWebHashHistory(import.meta.env.BASE_URL),
   routes: [
-    { 
+    {
       path: '/',
       component: Layout,
       name: 'main',
-      redirect: to => {
-        const loaclData = localStorage.getItem('Vuex_data')
-        
-        if (loaclData) {
-          //如果 loaclData 存在，代码会解析数据并尝试找到用户应该看到的第一个菜单项的路径。
-          const child = JSON.parse(loaclData).menu.routerList[0].children
-          // 判断是否有二级菜单（子路由）
-          if (child) { 
-            return child[0].meta.path   //跳转逻辑： 如果第一个根菜单项下有子菜单，则重定向到第一个子菜单的路径。
-          } else {                      //没有二级菜单 (else 成立)
-            return JSON.parse(loaclData).menu.routerList[0].meta.path //跳转逻辑： 如果第一个根菜单项没有子菜单，则直接重定向到该根菜单项本身的路径。
+      redirect: (to) => {
+        // 从 Pinia 持久化存储读取菜单数据
+        const localData = localStorage.getItem('pinia_menu')
+
+        // 默认跳转登录页
+        let redirectPath = '/login'
+
+        // 如果存在本地存储的菜单数据，计算第一个可用菜单路径
+        if (localData) {
+          const menus = JSON.parse(localData).routerList
+          if (menus && menus.length > 0) {
+            const firstItem = menus[0]
+            // 判断是否有二级菜单（子路由）
+            if (firstItem.children && firstItem.children.length > 0) {
+              // 如果有子菜单，跳转到第一个子菜单路径
+              redirectPath = firstItem.children[0].meta.path
+            } else {
+              // 没有子菜单，直接跳转到一级菜单路径
+              redirectPath = firstItem.meta.path
+            }
           }
-        } else {
-          return '/login'
         }
+
+        return redirectPath
       },
       children: [
         // {
@@ -75,11 +84,11 @@ const router = createRouter({
         //     }
         //   ]
         // }
-      ]
+      ],
     },
     {
       path: '/login',
-      component: Login
+      component: Login,
     },
   ],
 })

@@ -1,12 +1,11 @@
 import { createApp } from 'vue'
 import App from './App.vue'
 import router from './router'
-import './style.css'   //导入清除默认样式
-import store from './store'
+import './style.css' //导入清除默认样式
+import pinia from './store' // 改为导入 Pinia 实例
+import { useMenuStore } from './store/menu' // 导入 Pinia store
 import panelHead from './components/panelHead.vue'
-import * as ElementPlusIconsVue from '@element-plus/icons-vue'// 引入elementplus图标库
-
-
+import * as ElementPlusIconsVue from '@element-plus/icons-vue' // 引入elementplus图标库
 
 //路由前置守卫
 router.beforeEach((to, from) => {
@@ -23,28 +22,37 @@ router.beforeEach((to, from) => {
     return true
   }
 })
-//刷新后白屏 动态路由添加 确保了路由的添加速度快于路由的匹配速度。
-const loaclData = localStorage.getItem('Vuex_data')
-if (loaclData) {
-  store.commit('DynamicMenuRender', JSON.parse(loaclData).menu.routerList)
-  store.state.menu.routerList.forEach(item => {
+
+// 创建 Vue 应用实例
+const app = createApp(App)
+
+// 注册 Pinia (必须在使用 useMenuStore 之前)
+app.use(pinia)
+
+// 刷新后白屏 动态路由添加 确保了路由的添加速度快于路由的匹配速度。
+// 原 Vuex: store.commit('DynamicMenuRender', ...) 改为 Pinia action 调用
+const localData = localStorage.getItem('pinia_menu') // key 从 Vuex_data 改为 pinia_menu
+if (localData) {
+  const menuStore = useMenuStore()
+  const parsedData = JSON.parse(localData)
+  // 调用 Pinia action (原 store.commit)
+  menuStore.dynamicMenuRender(parsedData.routerList)
+  // 原 store.state.menu.routerList 改为直接访问 menuStore.routerList
+  menuStore.routerList.forEach((item) => {
     router.addRoute('main', item)
   })
 }
 
-
-
-const app = createApp(App)
+// 注册 ElementPlus 图标
 for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
   app.component(key, component)
 }
 
-
-
-//创建时选上这里就默认挂载了
+// 注册路由
 app.use(router)
+
+// 挂载应用
 app.mount('#app')
-//vuex
-app.use(store)
-//全局挂在一下 省得都引用了
+
+// 全局注册组件 省得都引用了
 app.component('panelHead', panelHead)

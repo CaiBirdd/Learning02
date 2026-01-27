@@ -5,7 +5,9 @@ import 'element-plus/theme-chalk/el-message.css'
 import { UserFilled, Lock } from '@element-plus/icons-vue' //引用图标
 import { getCode,userRegister,userLogin,getAccountMenuPermissionAPI } from '@/api'
 import { useRouter } from 'vue-router'
-import { useStore } from 'vuex'
+// 原 Vuex: import { useStore } from 'vuex' 改为导入 Pinia store
+import { useMenuStore } from '@/store/menu'
+
 const router  = useRouter()
 const imgUrl = new URL('../../../public/login-head.png', import.meta.url).href
 // 切换表单 0是登录页 1是注册页
@@ -41,7 +43,7 @@ const countdownChange = async ()=> {
   //倒计时 
   // 新增**手动执行第一次更新，立即改变状态
   countdown.value.time -= 1 // 立即减 1 (变成 59)
-  countdown.value.validText = `剩余${countdown.value.time}s` // 立即显示 “剩余59s” 计时器接下来再接管
+  countdown.value.validText = `剩余${countdown.value.time}s` // 立即显示 "剩余59s" 计时器接下来再接管
   let timer = setInterval(()=>{
     if(countdown.value.time <= 0){
       //倒计时到头了 重置倒计时
@@ -90,11 +92,14 @@ const rules = ref({
 })
 
 //登录和注册操作
-const store = useStore()
+const menuStore = useMenuStore()
 const loginFormRef = ref()
 //首先进行表单校验 这块主体都是取自elementplus
 //传入的 formEl 就是 loginFormRef.value，也就是整个 <el-form> 组件实例
 //valid	校验结果，布尔值     fields 是未通过的字段信息
+
+//处理好后的动态路由信息
+const routerList = computed(() => menuStore.routerList)
 const submitForm = async(formEl)=>{
   if (!formEl) return
   await formEl.validate(async (valid, fields) => {
@@ -119,7 +124,7 @@ const submitForm = async(formEl)=>{
           //获取当前登录账户的菜单权限信息
           const res2 = await getAccountMenuPermissionAPI()
           console.log(res2,'当前登录账户的菜单权限信息')
-          store.commit('DynamicMenuRender',res2.data.data)
+          menuStore.dynamicMenuRender(res2.data.data)
           console.log(routerList.value,'处理好后的动态路由信息')
           //处理好的动态路由信息正式添加到 Vue Router 实例中
           //toRaw响应式数据转化为原始对象 遍历，通过router自带的addRoute方法，这是 Vue Router 4 的核心方法之一，用于在应用运行时动态添加一条新路由。
@@ -127,7 +132,20 @@ const submitForm = async(formEl)=>{
             router.addRoute('main', item)         //'main': 这是 addRoute 方法的第一个参数，表示新路由的父路由的名称。
           })
           //做完以上 调到首页
-          router.push('/')
+          // router.push('/') // 原逻辑依赖 router/index.js 中的 redirect 读取 localStorage，可能因持久化延迟导致失败
+          
+          // 新逻辑：直接计算第一个可用菜单路径进行跳转，不依赖 localStorage
+          let redirectPath = '/'
+          const menus = toRaw(routerList.value)
+          if(menus && menus.length > 0) {
+            const firstItem = menus[0]
+            if(firstItem.children && firstItem.children.length > 0) {
+              redirectPath = firstItem.children[0].meta.path
+            } else {
+              redirectPath = firstItem.meta.path
+            }
+          }
+          router.push(redirectPath)
         }
       }
     } else {
@@ -135,8 +153,7 @@ const submitForm = async(formEl)=>{
     }
   })
 }
-//处理好后的动态路由信息
-const routerList = computed(() => store.state.menu.routerList)
+
 
 
 </script>
@@ -209,4 +226,3 @@ const routerList = computed(() => store.state.menu.routerList)
   }
   
 </style>
-

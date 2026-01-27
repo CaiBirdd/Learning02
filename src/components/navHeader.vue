@@ -1,19 +1,20 @@
 <script setup>
 import { computed } from 'vue'
-import { useStore } from 'vuex'
+import { useMenuStore } from '@/store/menu'
 import { useRoute,useRouter } from 'vue-router' 
 import { ElMessage } from 'element-plus'
 import 'element-plus/theme-chalk/el-message.css'
 const route = useRoute() 
 const router = useRouter()
-const store = useStore()
-const selectMenu = computed(() => store.state.menu.selectMenu)
+const menuStore = useMenuStore()
 
+const selectMenu = computed(() => menuStore.selectMenu)
 
 //关闭tab页面 item就是selectMenu中的对象数组，也就是菜单一项，index是其下标
 const closeTab = (item,index) =>{
-  // 1. 触发 vuex 中的方法，删除 Tab 点了就删，这里没有判断
-  store.commit('closeMenu', item)
+  // 1. 触发 Pinia 中的 action，删除 Tab 点了就删，这里没有判断
+  // 原 Vuex: store.commit('closeMenu', item) 改为直接调用 Pinia action
+  menuStore.closeMenu(item)
   // 2. 删除非当前选中页面的逻辑：如果删除的 Tab 不是当前用户正在看的页面，则不跳转
   if(item.path !== route.path){
     return
@@ -21,9 +22,9 @@ const closeTab = (item,index) =>{
   
   // 3. 处理删除当前选中 Tab 后的路由跳转逻辑
   
-  // 3.1. 检查是否删除的是“最后一项” 这个最后一项有两个意思，一个是满了的最后一项，一个是就是删除到最后一项了
-  // 注意：这里的 index 是 commit 之前 selectMenu 数组中的下标
-  // selectMenu.value.length 已经是 commit 之后的新长度了 (减少了 1)
+  // 3.1. 检查是否删除的是"最后一项" 这个最后一项有两个意思，一个是满了的最后一项，一个是就是删除到最后一项了
+  // 注意：这里的 index 是 action 执行之前 selectMenu 数组中的下标
+  // selectMenu.value.length 已经是 action 执行之后的新长度了 (减少了 1)
   if(index === selectMenu.value.length ){ 
     
     // 3.1.1. 删除后 Tab 列表是否为空
@@ -53,12 +54,13 @@ const handleCommand = (data) =>{
   if(data === 'loginout'){
     localStorage.removeItem('pz_token')
     localStorage.removeItem('pz_userInfo')
-    localStorage.removeItem('Vuex_data')
+    // 原 Vuex: localStorage.removeItem('Vuex_data') 改为 Pinia 的 key
+    localStorage.removeItem('pinia_menu')
     router.push('/login')
     ElMessage.success('退出登录成功！')
   } 
 }
-//从vuex拿本地的用户名和昵称 将字符串转化为对象
+//从本地拿用户名和昵称 将字符串转化为对象
 const userInfo = JSON.parse(localStorage.getItem('pz_userInfo'))
 </script>
 
@@ -66,8 +68,8 @@ const userInfo = JSON.parse(localStorage.getItem('pz_userInfo'))
 
   <div class="header-container flex-box space-between">
     <div class="header-left flex-box">
-      <!-- 使用vuex的store实例.commit触发改变state的事件 -->
-      <el-icon class="icon" @click="store.commit('collapseMenu')">
+      <!-- 原 Vuex: store.commit('collapseMenu') 改为直接调用 Pinia action -->
+      <el-icon class="icon" @click="menuStore.collapseMenu()">
         <Fold />
       </el-icon>
 

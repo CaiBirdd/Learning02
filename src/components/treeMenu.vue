@@ -1,18 +1,18 @@
 <script setup>
 import { useRouter } from 'vue-router'
-import { useStore } from 'vuex'
-// defineProps(['menuData'])
-// console.log(menuData) 这种写法，可以接收到数据，但是在这里打印不出来
+import { useMenuStore } from '@/store/menu'
+
 const { menuData,loopIndex } = defineProps(['menuData','loopIndex'])
 console.log(menuData,loopIndex)  // ✅ 直接拿到
 
 //点击实现路由切换
-const store = useStore()
+const menuStore = useMenuStore()
 const router = useRouter()
+
 const handleClick = (item,active) =>{
   router.push(item.meta.path) //实现点击时右侧页面跳转
-  store.commit('addMenu', item.meta) //将当前点击的菜单信息传入 就是具体的那一项的数组
-  store.commit('updateMenuActive', active) //实现点击的菜单一直高亮 具体实现在aside组件
+  menuStore.addMenu(item.meta) //将当前点击的菜单信息传入 就是具体的那一项的数组
+  menuStore.updateMenuActive(active) //实现点击的菜单一直高亮 具体实现在aside组件
 }
 </script>
 
